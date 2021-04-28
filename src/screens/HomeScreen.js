@@ -4,8 +4,8 @@ import ListEvent from './ListEvent';
 
 const HomeScreen = () => {
   const tasks = [
-    { text: 'task 1', date: '12/20/2021' },
-    { text: 'task 1', date: '12/20/2021' },
+    { id: '1', text: 'task 1', date: '12/20/2021' },
+    { id: '2', text: 'task 1', date: '12/20/2021' },
   ];
   const [events, setEvents] = useState(tasks);
   const [text, setText] = useState('');
@@ -13,9 +13,15 @@ const HomeScreen = () => {
   const submitHandler = (e) => {
     e.preventDefault();
     const newArr = events.slice();
-    newArr.splice(0, 0, { text: text, date: date });
+    newArr.splice(0, 0, { id: Math.random(1000), text: text, date: date });
     setEvents(newArr);
     console.log(newArr, events);
+  };
+
+  const deleteHandler = (index) => {
+    const newArr = events.slice();
+    newArr.splice(index, 1);
+    setEvents(newArr);
   };
 
   return (
@@ -23,15 +29,17 @@ const HomeScreen = () => {
       <Row className="justify-content-md-center">
         <Col xs={12} md={6}>
           <h1>Diary</h1>
-          {events.map((event) => {
-            {
-              console.log(event.date);
-            }
-            <ListEvent event={event} />;
+          {events.map((event, index) => {
+            return (
+              <ListEvent
+                key={index}
+                event={event}
+                remove={() => deleteHandler({ index })}
+              />
+            );
           })}
           <Form onSubmit={submitHandler}>
             <Form.Group controlId="text">
-              <Form.Label>Text</Form.Label>
               <Form.Control
                 type="text"
                 placeholder="Enter Your Event"
@@ -40,7 +48,6 @@ const HomeScreen = () => {
             </Form.Group>
 
             <Form.Group controlId="date">
-              <Form.Label>Date </Form.Label>
               <Form.Control
                 type="date"
                 placeholder="Enter Date"
